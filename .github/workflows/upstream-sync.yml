@@ -1,0 +1,84 @@
+name: Upstream Sync
+
+on:
+  schedule:
+    - cron: "0 3 1 * *" # 毎月1日 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v5
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/jackyzha0/quartz.git
+
+      - name: Fetch upstream v5
+        run: git fetch upstream v5
+
+      - name: Check for new upstream commits
+        id: check
+        run: |
+          if git merge-base --is-ancestor upstream/v5 HEAD; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Attempt merge
+        if: steps.check.outputs.has_changes == 'true'
+        id: merge
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git merge upstream/v5 --no-edit; then
+            echo "status=merged" >> "$GITHUB_OUTPUT"
+          else
+            git merge --abort
+            echo "status=conflict" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Pull Request
+        if: steps.check.outputs.has_changes == 'true' && steps.merge.outputs.status == 'merged'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: upstream-sync/v5
+          delete-branch: true
+          base: v5
+          title: "chore: sync with upstream quartz (v5)"
+          commit-message: "Merge upstream/v5"
+          body: |
+            本家 [jackyzha0/quartz](https://github.com/jackyzha0/quartz) の `v5` ブランチに新しい変更があります。
+            自動マージでコンフリクトはありませんでしたが、差分を確認してからマージしてください。
+
+            このPRは `upstream-sync.yml` (月次cron + 手動実行) によって自動生成されました。
+
+      - name: Open issue on conflict
+        if: steps.check.outputs.has_changes == 'true' && steps.merge.outputs.status == 'conflict'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "本家アップデートの自動マージがコンフリクトしました",
+              body: [
+                "jackyzha0/quartz の `v5` ブランチに新しい変更がありますが、自動マージがコンフリクトしたため PR を作成できませんでした。",
+                "",
+                "ローカルで以下を実行して手動で解決してください:",
+                "",
+                "```bash",
+                "git fetch upstream v5",
+                "git merge upstream/v5",
+                "# コンフリクトを解決してcommit・push",
+                "```",
+              ].join("\n"),
+            })
