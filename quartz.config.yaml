@@ -15,6 +15,7 @@ configuration:
     - .claude
     - .claudian
     - .github
+    - 70-Resources/Templates
   theme:
     fontOrigin: googleFonts
     cdnCaching: true

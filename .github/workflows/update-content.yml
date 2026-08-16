@@ -1,0 +1,31 @@
+name: Update Content
+
+on:
+  repository_dispatch:
+    types:
+      - update
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v5
+          submodules: true
+          token: ${{ secrets.PAT }}
+
+      - name: Update content submodule
+        run: git submodule update --remote content
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "sachiesaaan"
+          git config user.email "tachibanaa1211@gmail.com"
+          git add content
+          if git diff --cached --quiet; then
+            echo "No content changes"
+          else
+            git commit -m "update content submodule (by update-content.yml)"
+            git push origin v5
+          fi
