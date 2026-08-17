@@ -28,7 +28,11 @@ function byCreatedDateDesc(f1: QuartzPluginData, f2: QuartzPluginData): number {
 
 const AllNotesList: QuartzComponentConstructor = () => {
   const Component: QuartzComponent = (props?: QuartzComponentProps) => {
-    const files = [...(props?.allFiles ?? [])].sort(byCreatedDateDesc)
+    // allFilesにはFolderPage/TagPage等が生成した仮想ページも混ざっているため、
+    // frontmatterがある実ノートかつ publish: true のものだけに絞る
+    const files = (props?.allFiles ?? [])
+      .filter((f) => f.frontmatter?.publish === true)
+      .sort(byCreatedDateDesc)
     const fileSlug = props?.fileData?.slug ?? ""
     const locale = props?.cfg?.locale ?? "en-US"
 
