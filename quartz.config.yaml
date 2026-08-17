@@ -54,9 +54,6 @@ plugins:
         - git
         - filesystem
     order: 10
-  - source: "./plugins/auto-publish-tag"
-    enabled: true
-    order: 15
   - source: "@quartz-community/syntax-highlighting"
     enabled: true
     options:
