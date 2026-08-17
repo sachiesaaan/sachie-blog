@@ -161,6 +161,8 @@ plugins:
     enabled: true
   - source: "@quartz-community/tag-page"
     enabled: true
+  - source: "./plugins/all-notes-page"
+    enabled: true
   - source: "@quartz-community/explorer"
     enabled: false
     layout:
