@@ -38,7 +38,7 @@ const AllNotesList: QuartzComponentConstructor = () => {
 
     return h("div", { class: "popover-hint" }, [
       h("article", { class: "popover-hint" }, [
-        h("div", { class: "markdown-preview-view markdown-rendered" }, [h("h1", null, "notes")]),
+        h("div", { class: "markdown-preview-view markdown-rendered" }),
       ]),
       h("div", { class: "page-listing" }, [
         h(

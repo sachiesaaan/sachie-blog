@@ -10,3 +10,8 @@ a {
     padding: 0;
   }
 }
+
+// サイトタイトル(sachie.blog)はナビゲーションのラベルとして扱い、下線なし
+.sidebar .page-title a {
+  text-decoration: none;
+}

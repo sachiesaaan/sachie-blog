@@ -179,8 +179,6 @@ plugins:
       position: right
       priority: 20
       group: toolbar
-      groupOptions:
-        grow: true
   - source: "@quartz-community/backlinks"
     enabled: false
     layout:
@@ -213,7 +211,7 @@ plugins:
       priority: 30
       group: toolbar
   - source: "@quartz-community/reader-mode"
-    enabled: true
+    enabled: false
     layout:
       position: right
       priority: 35
@@ -268,6 +266,16 @@ plugins:
       position: beforeBody
       priority: 15
       display: all
+  - source: "./plugins/page-dates"
+    enabled: true
+    layout:
+      position: beforeBody
+      priority: 16
+      display: all
+  - source: "./plugins/search-preview-fixes"
+    enabled: true
+  - source: "./plugins/toc-align"
+    enabled: true
   - source: "@quartz-community/obsidian-plugin-excalidraw"
     enabled: false
     options:
@@ -280,7 +288,7 @@ layout:
     toolbar:
       priority: 5
       direction: row
-      gap: 0.5rem
+      gap: 0.4rem
   byPageType:
     "404":
       positions:
@@ -290,11 +298,9 @@ layout:
     content: {}
     folder:
       exclude:
-        - reader-mode
         - "@quartz-community/table-of-contents"
     tag:
       exclude:
-        - reader-mode
         - "@quartz-community/table-of-contents"
     canvas: {}
     bases: {}

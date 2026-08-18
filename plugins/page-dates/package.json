@@ -1,0 +1,22 @@
+{
+  "name": "page-dates",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./components": "./index.ts"
+  },
+  "quartz": {
+    "name": "page-dates",
+    "displayName": "Page Dates",
+    "description": "Shows the created/modified dates next to a page's tags",
+    "category": "component",
+    "components": {
+      "PageDates": {
+        "displayName": "Page Dates",
+        "defaultPosition": "beforeBody",
+        "defaultPriority": 16
+      }
+    }
+  }
+}

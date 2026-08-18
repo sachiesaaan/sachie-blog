@@ -1,0 +1,22 @@
+{
+  "name": "toc-align",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./components": "./index.ts"
+  },
+  "quartz": {
+    "name": "toc-align",
+    "displayName": "TOC Align",
+    "description": "Vertically aligns the right-sidebar table of contents with the first line of the article body",
+    "category": "component",
+    "components": {
+      "TocAlign": {
+        "displayName": "TOC Align",
+        "defaultPosition": "afterBody",
+        "defaultPriority": 90
+      }
+    }
+  }
+}

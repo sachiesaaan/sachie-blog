@@ -42,7 +42,6 @@ export const DefaultFrame: PageFrame = {
             </div>
           </div>
           <Content {...componentData} />
-          <hr />
           <div class="page-footer">
             {afterBody.map((BodyComponent) => (
               <BodyComponent {...componentData} />

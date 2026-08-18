@@ -164,8 +164,10 @@ a {
   max-width: calc(#{map.get($breakpoints, desktop)} + 300px);
   margin: 0 auto;
   & article {
+    // matches the base h1 size below instead of a bigger bonus size —
+    // headings inside the article body should stay a consistent scale
     & > h1 {
-      font-size: 2rem;
+      font-size: 1.5rem;
     }
 
     & li:has(> input[type="checkbox"]) {
@@ -249,6 +251,9 @@ a {
       grid-area: grid-sidebar-right;
       margin-right: 0;
       flex-direction: column;
+
+      // toc's top offset is set at runtime by plugins/toc-align to line up
+      // with the first line of the article body (see that plugin)
       @media all and ($mobile) {
         margin-left: inherit;
         margin-right: inherit;
@@ -276,6 +281,8 @@ a {
     & .page-header {
       grid-area: grid-header;
       max-width: 740px;
+      // top aligned with the sidebar's own top padding, so the title lines
+      // up with the site title / toolbar icons at the top of the header
       margin: $topSpacing auto 0 auto;
       @media all and ($mobile) {
         margin-top: 0;
@@ -283,7 +290,10 @@ a {
       }
     }
 
-    & .center > article {
+    // .center > .popover-hint covers folder/tag/notes listing pages, whose
+    // body content isn't wrapped directly in <article> (see DESIGN.md)
+    & .center > article,
+    & .center > .popover-hint {
       grid-area: grid-center;
       max-width: 740px;
       margin-left: auto;
@@ -354,6 +364,18 @@ a {
     min-width: 100%;
     margin: 0;
   }
+}
+
+// 404 page (the only current user of the minimal frame): its <h1> is a
+// direct child of <article>, so it would otherwise inherit the bigger
+// in-body-heading size (`.page article > h1 { font-size: 2rem }` above) and
+// sit at the article's own top margin instead of matching a normal page's
+// title size/position
+.page[data-frame="minimal"] article > h1 {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: $topSpacing;
+  margin-bottom: 1rem;
 }
 
 .footnotes {
@@ -444,19 +466,19 @@ h6 {
 
 // typography improvements
 h1 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   margin-top: 2.25rem;
   margin-bottom: 1rem;
 }
 
 h2 {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   margin-top: 1.9rem;
   margin-bottom: 1rem;
 }
 
 h3 {
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   margin-top: 1.62rem;
   margin-bottom: 1rem;
 }
@@ -691,7 +713,17 @@ iframe.pdf {
 // hide the per-entry tag list on tag index/detail pages — the tag is
 // already implied by being on that tag's page, so repeating it is noise
 body[data-slug="tags"] .section > .tags,
-body[data-slug^="tags/"] .section > .tags {
+body[data-slug^="tags/"] .section > .tags,
+.preview-container.is-tag-page-preview .section > .tags {
+  display: none;
+}
+
+// /tags index page: "Found N total tags." and each tag's "N items with this
+// tag." (plus any "Showing first N tags." pagination notice) are all noise —
+// the tag list and its entries speak for themselves
+// (the index page's actual slug is "tags/index", not "tags")
+body[data-slug="tags/index"] .popover-hint > p,
+body[data-slug="tags/index"] .page-listing > p {
   display: none;
 }
 
@@ -712,7 +744,12 @@ body[data-slug^="tags/"] .section > .tags {
 // don't want the boxed/collapsible "Properties" panel look for a single row —
 // strip the box chrome so just the tag pills remain
 // (descendant selector to reliably outrank the package's own same-specificity rule)
-.page-header .note-properties {
+// .preview-inner covers the search modal's hover/focus preview pane, and
+// .popover-inner covers the inline link-hover popover — both render a page's
+// popover-hint outside of any .page-header
+.page-header .note-properties,
+.preview-inner .note-properties,
+.popover-inner .note-properties {
   margin: 0;
   border: none;
   border-radius: 0;
@@ -733,5 +770,102 @@ body[data-slug^="tags/"] .section > .tags {
   & .note-properties-value {
     padding: 0;
     width: auto;
+  }
+
+  // the package's table is `width: 100%`, which forces this box to fill its
+  // container even once it's a fit-content flex item below — kill that so it
+  // hugs the tag pills instead
+  & .note-properties-table {
+    width: auto;
+  }
+}
+
+// Lay the tags row (note-properties) and page-dates out on the same line,
+// with the title forced onto its own row above them
+// (.preview-inner: search modal's preview pane; .popover-inner: link-hover popover)
+.page-header .popover-hint,
+.preview-inner > .popover-hint,
+.popover-inner > .popover-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1rem;
+
+  & > .article-title {
+    flex: 1 0 100%;
+    // cancel the generic `h1 { margin-top: 2.25rem }` typography rule so the
+    // title's own top lines up with .page-header's top (and thus with the
+    // sidebar icons, which share the same top offset)
+    margin-top: 0;
+    // page title reads as plain body text, not a decorated heading — same
+    // size and weight as a normal paragraph
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  & > .note-properties {
+    // without this, the package's own `.note-properties-table { width: 100% }`
+    // makes the flex item stretch to the full row instead of hugging the pills
+    flex: 0 1 auto;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+.page-dates {
+  margin: 0;
+  margin-left: auto;
+  flex: 0 0 auto;
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--gray);
+  white-space: nowrap;
+
+  & > .page-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  & svg {
+    width: 14px;
+    height: 14px;
+    stroke: var(--gray);
+    stroke-width: 1.8px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// Search modal: match the article text column width instead of the
+// package's default 65%/90% viewport-relative width
+// (#quartz-root prefix to outrank the package's own same-specificity rule)
+#quartz-root .search > .search-container > .search-space {
+  width: 90%;
+  max-width: 740px;
+}
+
+// Search toolbar button: icon only — nobody types into this button itself,
+// it just opens the modal, so the bordered box + "Search" label are noise
+#quartz-root .search {
+  min-width: 0;
+  max-width: none;
+}
+
+#quartz-root .search > .search-button {
+  border: none;
+  padding: 0;
+  width: auto;
+  height: auto;
+
+  & > p {
+    display: none;
+  }
+
+  & svg {
+    margin: 0;
   }
 }

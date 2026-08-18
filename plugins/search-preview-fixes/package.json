@@ -1,0 +1,22 @@
+{
+  "name": "search-preview-fixes",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts",
+    "./components": "./index.ts"
+  },
+  "quartz": {
+    "name": "search-preview-fixes",
+    "displayName": "Search Preview Fixes",
+    "description": "Marks the search modal's preview pane when it's showing a tag page, so the per-entry tag badge list can be hidden the same way it is on the real tag page",
+    "category": "component",
+    "components": {
+      "SearchPreviewFixes": {
+        "displayName": "Search Preview Fixes",
+        "defaultPosition": "afterBody",
+        "defaultPriority": 90
+      }
+    }
+  }
+}
