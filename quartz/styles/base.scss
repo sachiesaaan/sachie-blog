@@ -5,6 +5,7 @@
 @use "./callouts.scss";
 
 html {
+  font-size: 14px;
   scroll-behavior: smooth;
   text-size-adjust: none;
   overflow-x: hidden;
@@ -681,4 +682,11 @@ iframe.pdf {
   background: var(--secondary);
   transition: width 0.2s ease;
   z-index: 9999;
+}
+
+// hide the per-entry tag list on tag index/detail pages — the tag is
+// already implied by being on that tag's page, so repeating it is noise
+body[data-slug="tags"] .section > .tags,
+body[data-slug^="tags/"] .section > .tags {
+  display: none;
 }
