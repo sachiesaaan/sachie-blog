@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: v5
+          ref: main
           fetch-depth: 0
 
       - name: Add upstream remote
@@ -52,7 +52,7 @@ jobs:
         with:
           branch: upstream-sync/v5
           delete-branch: true
-          base: v5
+          base: main
           title: "chore: sync with upstream quartz (v5)"
           commit-message: "Merge upstream/v5"
           body: |

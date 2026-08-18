@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: v5
+          ref: main
           submodules: true
           token: ${{ secrets.PAT }}
 
@@ -27,5 +27,5 @@ jobs:
             echo "No content changes"
           else
             git commit -m "update content submodule (by update-content.yml)"
-            git push origin v5
+            git push origin main
           fi
