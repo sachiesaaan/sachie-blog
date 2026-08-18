@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=./quartz/plugins/quartz-plugins.schema.json
 configuration:
-  pageTitle: sachie
+  pageTitle: sachie.blog
   pageTitleSuffix: ""
   enableSPA: true
   enablePopovers: true
@@ -176,7 +176,7 @@ plugins:
   - source: "@quartz-community/search"
     enabled: true
     layout:
-      position: left
+      position: right
       priority: 20
       group: toolbar
       groupOptions:
@@ -209,13 +209,13 @@ plugins:
   - source: "@quartz-community/darkmode"
     enabled: true
     layout:
-      position: left
+      position: right
       priority: 30
       group: toolbar
   - source: "@quartz-community/reader-mode"
     enabled: true
     layout:
-      position: left
+      position: right
       priority: 35
       group: toolbar
   - source: "@quartz-community/breadcrumbs"
@@ -233,7 +233,7 @@ plugins:
       position: afterBody
       priority: 10
   - source: "@quartz-community/footer"
-    enabled: true
+    enabled: false
     options:
       links: {}
     layout:
@@ -258,9 +258,7 @@ plugins:
     options:
       includeAll: false
       includedProperties:
-        - description
         - tags
-        - aliases
       excludedProperties: []
       hidePropertiesView: false
       delimiters: ---
@@ -280,7 +278,7 @@ plugins:
 layout:
   groups:
     toolbar:
-      priority: 35
+      priority: 5
       direction: row
       gap: 0.5rem
   byPageType:
@@ -293,12 +291,10 @@ layout:
     folder:
       exclude:
         - reader-mode
-      positions:
-        right: []
+        - "@quartz-community/table-of-contents"
     tag:
       exclude:
         - reader-mode
-      positions:
-        right: []
+        - "@quartz-community/table-of-contents"
     canvas: {}
     bases: {}

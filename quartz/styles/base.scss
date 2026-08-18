@@ -275,7 +275,8 @@ a {
 
     & .page-header {
       grid-area: grid-header;
-      margin: $topSpacing 0 0 0;
+      max-width: 740px;
+      margin: $topSpacing auto 0 auto;
       @media all and ($mobile) {
         margin-top: 0;
         padding: 0;
@@ -284,6 +285,9 @@ a {
 
     & .center > article {
       grid-area: grid-center;
+      max-width: 740px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     & footer {
@@ -689,4 +693,45 @@ iframe.pdf {
 body[data-slug="tags"] .section > .tags,
 body[data-slug^="tags/"] .section > .tags {
   display: none;
+}
+
+// site title: plain body-text size (not an oversized heading), in the
+// accent color, so it reads as a quiet top-left label
+// (two-class selector to reliably outrank the page-title package's own
+// 1.75rem rule regardless of stylesheet load order)
+.sidebar .page-title {
+  font-size: 1rem;
+  margin: 0;
+
+  a {
+    color: var(--tertiary);
+  }
+}
+
+// note-properties: only "tags" is included (see quartz.config.yaml), and we
+// don't want the boxed/collapsible "Properties" panel look for a single row —
+// strip the box chrome so just the tag pills remain
+// (descendant selector to reliably outrank the package's own same-specificity rule)
+.page-header .note-properties {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  font-size: 1rem;
+
+  & > .note-properties-header {
+    display: none;
+  }
+
+  & .note-properties-row {
+    border-bottom: none;
+  }
+
+  & .note-properties-key {
+    display: none;
+  }
+
+  & .note-properties-value {
+    padding: 0;
+    width: auto;
+  }
 }
