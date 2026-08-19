@@ -1,6 +1,8 @@
 import { PerfTimer } from "../util/perf"
 import { getStaticResourcesFromPlugins } from "../plugins"
 import { ProcessedContent } from "../plugins/vfile"
+import { pruneUnpublishedLinks } from "./pruneUnpublishedLinks"
+import { getVirtualPageSlugs } from "../plugins/pageTypes/dispatcher"
 import { QuartzEmitterPluginInstance } from "../plugins/types"
 import { QuartzLogger } from "../util/log"
 import { trace } from "../util/trace"
@@ -54,6 +56,14 @@ export async function emitContent(ctx: BuildCtx, content: ProcessedContent[]) {
 
   let emittedFiles = 0
   const staticResources = getStaticResourcesFromPlugins(ctx)
+
+  // Phase -1: content is already publish-filtered, so its slugs — plus
+  // virtual pages like /tags and /notes — are the definitive set of pages
+  // that will exist. Unwrap any internal link that points outside of that
+  // before anything renders (PageTypeDispatcher below both renders AND
+  // writes pages in one pass, so this has to happen first; see
+  // pruneUnpublishedLinks.ts for the full story).
+  pruneUnpublishedLinks(content, getVirtualPageSlugs(ctx, content))
 
   // Phase 0: Run ComponentResources first so content-hashed asset filenames
   // (e.g. index-a3f2c1b.css) are available on ctx before pages are rendered.

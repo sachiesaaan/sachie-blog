@@ -15,6 +15,26 @@ function getPageTypes(ctx: BuildCtx): QuartzPageTypePluginInstance[] {
   return (ctx.cfg.plugins.pageTypes ?? []) as unknown as QuartzPageTypePluginInstance[]
 }
 
+/**
+ * Slugs of virtual pages (tag pages, folder pages, bases pages, etc.) that
+ * `emit()` below will generate and render. Calls the cheap `generate()` step
+ * only — no rendering — so callers that just need to know "which slugs will
+ * exist" (e.g. pruneUnpublishedLinks, which must run before `emit()` since
+ * it renders AND writes every page in one pass) can get the answer without
+ * paying for a real render.
+ */
+export function getVirtualPageSlugs(ctx: BuildCtx, content: ProcessedContent[]): Set<FullSlug> {
+  const cfg = ctx.cfg.configuration
+  const slugs = new Set<FullSlug>()
+  for (const pt of getPageTypes(ctx)) {
+    if (!pt.generate) continue
+    for (const vp of pt.generate({ content, cfg, ctx })) {
+      slugs.add(vp.slug as FullSlug)
+    }
+  }
+  return slugs
+}
+
 /** @internal Exported for testing only. */
 export function resolveLayout(
   pageType: QuartzPageTypePluginInstance,

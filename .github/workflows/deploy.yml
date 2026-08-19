@@ -30,6 +30,14 @@ jobs:
       - name: Install Quartz plugins
         run: npx quartz plugin install --from-config
 
+      - name: Cache optimized images
+        uses: actions/cache@v4
+        with:
+          path: .quartz-cache/optimized-images
+          key: optimized-images-${{ hashFiles('quartz/plugins/emitters/optimizeImage.ts') }}-${{ github.run_id }}
+          restore-keys: |
+            optimized-images-${{ hashFiles('quartz/plugins/emitters/optimizeImage.ts') }}-
+
       - name: Build
         run: npx quartz build
 

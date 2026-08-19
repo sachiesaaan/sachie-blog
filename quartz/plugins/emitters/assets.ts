@@ -5,6 +5,7 @@ import fs from "fs"
 import { glob } from "../../util/glob"
 import { Argv, BuildCtx } from "../../util/ctx"
 import { QuartzConfig } from "../../cfg"
+import { isOptimizableImage, optimizeImageToFile } from "./optimizeImage"
 
 function getPageTypeExtensions(ctx: BuildCtx): Set<string> {
   const extensions = new Set<string>()
@@ -36,7 +37,11 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
   const dir = path.dirname(dest) as FilePath
   await fs.promises.mkdir(dir, { recursive: true })
 
-  await fs.promises.copyFile(src, dest)
+  if (isOptimizableImage(fp)) {
+    await optimizeImageToFile(src, dest)
+  } else {
+    await fs.promises.copyFile(src, dest)
+  }
   return dest
 }
 

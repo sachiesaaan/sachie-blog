@@ -3,7 +3,7 @@ configuration:
   pageTitle: sachie.blog
   pageTitleSuffix: ""
   enableSPA: true
-  enablePopovers: true
+  enablePopovers: false
   analytics:
     provider: plausible
   locale: en-US
@@ -91,6 +91,8 @@ plugins:
     enabled: true
     options:
       markdownLinkResolution: shortest
+      externalLinkIcon: false
+      lazyLoad: true
     order: 60
   - source: "@quartz-community/description"
     enabled: true
@@ -114,6 +116,15 @@ plugins:
     order: 92
   - source: "@quartz-community/quartz-fonts"
     enabled: true
+    options:
+      # Quartz core already loads these same fonts from Google Fonts
+      # (theme.fontOrigin/cdnCaching in the `configuration` block above,
+      # wired through Head.tsx). Without this, the plugin's own default
+      # fontOrigin ("googleFonts") duplicates that request — two separate
+      # <link rel="stylesheet"> calls to fonts.googleapis.com for the exact
+      # same three families. "local" keeps this plugin's per-heading CSS
+      # variables but stops it from loading fonts a second time.
+      fontOrigin: local
   - source: "@quartz-themes/core"
     enabled: false
     options:
@@ -288,7 +299,7 @@ layout:
     toolbar:
       priority: 5
       direction: row
-      gap: 0.4rem
+      gap: 0.8rem
   byPageType:
     "404":
       positions:

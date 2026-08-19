@@ -130,6 +130,14 @@ a {
   }
 }
 
+// Internal links whose target isn't published get unwrapped into this plain
+// span (see pruneUnpublishedLinks.ts) — tinted orange so it doesn't read as
+// an error, but otherwise behave like surrounding text: no underline, no
+// hover state, no pointer cursor.
+.unpublished-link {
+  color: var(--tertiary);
+}
+
 .flex-component {
   display: flex;
 }
@@ -168,6 +176,13 @@ a {
     // headings inside the article body should stay a consistent scale
     & > h1 {
       font-size: 1.5rem;
+    }
+
+    // push the body text down one line's worth from the title/tags/date
+    // block above it — 1lh so it tracks the body's own line-height instead
+    // of a hardcoded value.
+    & > .markdown-preview-view {
+      margin-top: 1lh;
     }
 
     & li:has(> input[type="checkbox"]) {
