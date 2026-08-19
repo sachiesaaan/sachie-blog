@@ -1,5 +1,37 @@
 @use "./variables.scss" as *;
 
+// Metric-matched fallback faces so the swap from system font to the real
+// webfont (once it loads) doesn't visibly jump in size. Values generated via
+// @capsizecss/unpack against the actual Schibsted Grotesk / Source Sans Pro /
+// IBM Plex Mono font files, matched against @capsizecss/metrics' Arial /
+// Courier New data.
+@font-face {
+  font-family: "Schibsted Grotesk Fallback";
+  src: local("Arial");
+  ascent-override: 93.46%;
+  descent-override: 24.67%;
+  line-gap-override: 0%;
+  size-adjust: 104.49%;
+}
+
+@font-face {
+  font-family: "Source Sans Pro Fallback";
+  src: local("Arial");
+  ascent-override: 104.94%;
+  descent-override: 29.12%;
+  line-gap-override: 0%;
+  size-adjust: 93.76%;
+}
+
+@font-face {
+  font-family: "IBM Plex Mono Fallback";
+  src: local("Courier New");
+  ascent-override: 102.52%;
+  descent-override: 27.5%;
+  line-gap-override: 0%;
+  size-adjust: 99.98%;
+}
+
 // シンプルなハイパーテキストらしさを大事にしたいので、リンクは常に下線を出す
 a {
   text-decoration: underline;

@@ -18,7 +18,7 @@ configuration:
     - 70-Resources/Templates
   theme:
     fontOrigin: googleFonts
-    cdnCaching: true
+    cdnCaching: false
     typography:
       header: Schibsted Grotesk
       body: Source Sans Pro
@@ -78,6 +78,9 @@ plugins:
       enableVideoEmbed: true
       enableCheckbox: true
     order: 30
+  - source: "./plugins/image-metadata"
+    enabled: true
+    order: 35
   - source: "@quartz-community/github-flavored-markdown"
     enabled: true
     order: 40
@@ -113,7 +116,10 @@ plugins:
     enabled: false
     order: 92
   - source: "@quartz-community/quartz-fonts"
-    enabled: true
+    # Disabled: duplicates the core Head.tsx + componentResources.ts font
+    # loading (theme.fontOrigin/cdnCaching below), causing Google Fonts CSS
+    # and font files to be fetched twice with no extra functionality used.
+    enabled: false
   - source: "@quartz-themes/core"
     enabled: false
     options:

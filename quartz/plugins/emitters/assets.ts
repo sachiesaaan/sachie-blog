@@ -2,9 +2,31 @@ import { FilePath, joinSegments, slugifyFilePath } from "../../util/path"
 import { QuartzEmitterPlugin, QuartzPageTypePluginInstance } from "../types"
 import path from "path"
 import fs from "fs"
+import sharp from "sharp"
 import { glob } from "../../util/glob"
 import { Argv, BuildCtx } from "../../util/ctx"
 import { QuartzConfig } from "../../cfg"
+
+// Longest edge (px) images are downscaled to. 1600px covers the article's
+// text column at 2x device pixel ratio with margin, since there's no
+// lightbox/zoom to view photos at full resolution.
+const MAX_IMAGE_DIMENSION = 1600
+const resizableExts = new Set([".jpg", ".jpeg", ".png"])
+
+async function emitOptimizedImage(src: FilePath, dest: FilePath, ext: string) {
+  const pipeline = sharp(src).resize({
+    width: MAX_IMAGE_DIMENSION,
+    height: MAX_IMAGE_DIMENSION,
+    fit: "inside",
+    withoutEnlargement: true,
+  })
+
+  if (ext === ".png") {
+    await pipeline.png({ compressionLevel: 9, quality: 80 }).toFile(dest)
+  } else {
+    await pipeline.jpeg({ quality: 80, mozjpeg: true }).toFile(dest)
+  }
+}
 
 function getPageTypeExtensions(ctx: BuildCtx): Set<string> {
   const extensions = new Set<string>()
@@ -35,6 +57,16 @@ const copyFile = async (argv: Argv, fp: FilePath) => {
 
   const dir = path.dirname(dest) as FilePath
   await fs.promises.mkdir(dir, { recursive: true })
+
+  const ext = path.extname(fp).toLowerCase()
+  if (resizableExts.has(ext)) {
+    try {
+      await emitOptimizedImage(src, dest, ext)
+      return dest
+    } catch {
+      // fall back to a raw copy if sharp can't process this file (e.g. corrupt/odd encoding)
+    }
+  }
 
   await fs.promises.copyFile(src, dest)
   return dest

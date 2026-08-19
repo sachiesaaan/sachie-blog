@@ -1,0 +1,14 @@
+{
+  "name": "image-metadata",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "quartz": {
+    "name": "image-metadata",
+    "displayName": "Image Metadata",
+    "description": "Adds intrinsic width/height (avoids layout shift) and loading=\"lazy\"/decoding=\"async\" to embedded images",
+    "category": "transformer"
+  }
+}
